@@ -66,8 +66,10 @@ void PrintAutomorfTenK() {
 
 void execute_func() {
 	float x1, x2;
-	GetRoots(2, 6, 2, &x1, &x2);
-	printf("x1=%5.2f;x2=%5.2f\n", x1, x2);
+	int rootCnt;
+	rootCnt=GetRoots(2, 6, 2, &x1, &x2);
+	if(rootCnt>0)
+		printf("x1=%5.2f;x2=%5.2f\n", x1, x2);
 	GetAgeString(21);
 	GetAgeString(26);
 	GetAgeString(133);
