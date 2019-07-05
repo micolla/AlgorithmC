@@ -8,24 +8,30 @@ float IndexWeight(float h, float m) {
 	return i;
 }
 
-void GetRoots(float a, float b, float c, float* x1, float* x2) {
+int GetRoots(float a, float b, float c, float* x1, float* x2) {
 	float d = b * b - 4 * a * c;
 	if (d > 0) {
 		*x1 = (-b + sqrt(d)) / 2 * a;
 		*x2 = (-b - sqrt(d)) / 2 * a;
+		return 2;
 	}
 	else if (d == 0) {
 		*x1 = *x2 = -b / 2 * a;
+		return 1;
 	}
+	else
+		return 0;
 }
 
 void GetAgeString(int age) {
+	if (age>10&&age<15)
+		printf("%d лет\n", age);
 	if (age % 10 == 1)
-		printf("%d 1год\n", age);
+		printf("%d год\n", age);
 	else if (age % 10 < 5)
-		printf("%d 2года\n", age);
+		printf("%d года\n", age);
 	else
-		printf("%d 3лет\n", age);
+		printf("%d лет\n", age);
 }
 
 int IsOdd(int a) {
