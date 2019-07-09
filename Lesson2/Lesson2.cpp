@@ -1,15 +1,11 @@
 #include <iostream>
 
-int RaiseSimple(int a, int b) {
-	if (b == 0)
-		return 1;
-	else {
-		int r = a;
-		for (int i = 1; i < b; i++) {
-			r *= a;
-		}
-		return r;
+unsigned long long RaiseSimple(int a, int b) {
+	unsigned long long r = 1;
+	for (int i = 1; i < b; i++) {
+		r *= a;
 	}
+	return r;
 }
 
 int RaiseRecursive(int a, int b) {
@@ -23,25 +19,25 @@ int RaiseRecursive(int a, int b) {
 int RaiseRecursiveHalf(int a, int b) {
 	if (b > 0) {
 		if (b % 2 == 0) {
-			return RaiseRecursive(a * a, b / 2);
+			return RaiseRecursiveHalf(a * a, b / 2);
 		}
 		else
-			return a * RaiseRecursiveHalf(a, b-1);
+			return a * RaiseRecursiveHalf(a, b - 1);
 	}
 	else
 		return 1;
 }
 
-int convert(int x, int iter) {
+unsigned long long convert(int x, int iter) {
 	if (x == 1) {
-		return 1* RaiseSimple(10,iter);
+		return 1 * RaiseSimple(10, iter);
 	}
 	else {
-		return convert(x / 2, iter+1)+ (x % 2 != 0 ? 1 : 0 )* RaiseSimple(10, iter) ;
+		return convert(x / 2, iter + 1) + (x % 2 != 0 ? 1 : 0) * RaiseSimple(10, iter);
 	}
 }
 
-int DecToBin(int x) {
+unsigned long long DecToBin(int x) {
 	return convert(x, 0);
 }
 
