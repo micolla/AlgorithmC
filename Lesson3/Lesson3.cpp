@@ -145,6 +145,17 @@ int RecoursiveBinarySearch(int* arr, int len, int v) {
 	return CheckDiapason(0, len - 1, arr, v);
 }
 
+
+int RecoursiveLinearSearch(int* arr, int len, int v) {
+	if (arr[len - 1] == v)
+		return len - 1;
+	else if (len > 0)
+		return RecoursiveLinearSearch(arr, len - 1, v);
+	else
+		return - 1;
+}
+
+
 int main()
 {
 	int arr[MaxN];
@@ -156,4 +167,5 @@ int main()
 	//std::cout << "Cnt Iteration " << BubleSort(arr, MaxN) << "\n\n";
 	Print(MaxN, arr);
 	std::cout << "Find 42 " << RecoursiveBinarySearch(arr, MaxN, 42) << "\n\n";
+	std::cout << "Find 42 " << RecoursiveLinearSearch(arr, MaxN, 42) << "\n\n";
 }
