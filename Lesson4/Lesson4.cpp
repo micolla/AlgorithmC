@@ -40,17 +40,6 @@ void GetCoord(int iter, int* x, int* y) {
 	}
 }
 
-int CheckFilling() {
-	int fills = 0;
-	for (int i = 0; i < Y; i++) {
-		for (int j = 0; j < X; j++) {
-			if (board[i][j] > 0)
-				fills++;
-		}
-	}
-	return fills == 64 ? 1 : 0;
-}
-
 int MakeHourse(int x, int y) {
 	int newx, newy;
 	int iter = 0;
