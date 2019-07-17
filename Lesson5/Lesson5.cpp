@@ -46,6 +46,59 @@ void PrintStack(Stack* st) {
 	printf("\n");
 }
 
+#pragma region Queue
+
+typedef struct NodeQueue {
+	T data;
+	struct NodeQueue* next;
+	struct NodeQueue* previous;
+} NodeQueue;
+
+typedef struct {
+	NodeQueue* head;
+	NodeQueue* tail;
+	int size;
+} Queue;
+
+int EnQueue(Queue* q, T val) {
+	NodeQueue* temp = (NodeQueue*)malloc(sizeof(NodeQueue));
+	if (temp == NULL) return 0;
+
+	temp->data = val;
+	temp->next = NULL;
+	if (q->size == 0) {
+		q->head = temp;
+		temp->previous = NULL;
+	}
+	else if (q->size == 1) {
+		q->head->next = temp;
+		temp->previous = q->tail;
+	}
+	else {
+		temp->previous = q->tail;
+		q->tail->next = temp;
+	}
+	q->tail = temp;
+	q->size++;
+	return 1;
+}
+
+T DeQueue(Queue* q) {
+	if (q->size == 0) {
+		return -1;
+	}
+	NodeQueue* temp = q->head;
+	T result = temp->data;
+
+	q->head = q->head->next;
+	if(q->head !=NULL)
+		q->head->previous = NULL;
+	q->size--;
+	free(temp);
+	return result;
+}
+#pragma endregion
+
 void DecToBin(int x) {
 	Stack bin;
 	bin.size = 0;
@@ -186,4 +239,15 @@ int main()
 	st2 = *CopyStack2(&st1);
 	PrintStack(&st1);
 	PrintStack(&st2);
+	
+	Queue q;
+	q.size = 0;q.head = NULL;q.tail = NULL;
+	EnQueue(&q, 'H');
+	EnQueue(&q, 'e');
+	EnQueue(&q, 'l');
+	EnQueue(&q, 'l');
+	EnQueue(&q, 'o');
+	while (q.size != 0) {
+		printf("%c", DeQueue(&q));
+	}
 }
