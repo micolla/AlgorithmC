@@ -192,27 +192,29 @@ Stack* CopyStack(Stack* st) {
 	return &result;
 }
 
-Stack* CopyStack2(Stack* st) { //
+int CopyStack2(Stack* st, Stack* st2) { //
 	Node* temp;
 	Node* temp2;
 	Node* temp3;
-	Stack result;
-	result.size = 0;result.head = NULL;
+	st2->head = NULL;st2->size = 0;
 	temp = st->head;
-	push(&result, temp->data);
-	temp2 = result.head;
+	push(st2, temp->data);
+	temp2 = st2->head;
 	temp3 = temp;
 	while (temp3->next != NULL)
 	{
 		temp3 = temp3->next;
 		temp = (Node*)malloc(sizeof(Node));
+		if (temp == NULL) {
+			return 0;
+		}
 		temp->data = temp3->data;
 		temp->next = NULL;
 		temp2->next = temp;
 		temp2 = temp;
-		result.size++;
+		st2->size++;
 	}
-	return &result;
+	return 1;
 }
 
 
@@ -236,7 +238,7 @@ int main()
 	push(&st1, 'l');
 	push(&st1, 'l');
 	push(&st1, 'o');
-	st2 = *CopyStack2(&st1);
+	CopyStack2(&st1, &st2);
 	PrintStack(&st1);
 	PrintStack(&st2);
 	
