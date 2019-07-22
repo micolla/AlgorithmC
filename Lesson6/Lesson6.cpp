@@ -5,8 +5,8 @@
 #define T int
 int iter = 0;
 
-unsigned long GetSimpleHash(char* str,int n) {
-	unsigned long hash=0;
+unsigned long GetSimpleHash(char* str, int n) {
+	unsigned long hash = 0;
 	for (int i = 0; i < n; i++)
 	{
 		hash += str[i];
@@ -43,8 +43,8 @@ void BubleSort(int* arr, int n) {
 	}
 }
 
-SearchTree* Tree(int* arr, int n1,int n2) {
-	if (n1 > n2)
+SearchTree* Tree(int* arr, int n1, int n2) {
+	if (n1 >= n2)
 		return NULL;
 	else {
 		SearchTree* newNode;
@@ -52,42 +52,41 @@ SearchTree* Tree(int* arr, int n1,int n2) {
 		if (newNode == NULL) {
 			return NULL;
 		}
-		int mid = n1+(n2 - n1) / 2;
-		newNode->data = arr[mid-1];
-		newNode->left = Tree(arr, n1, mid-1);
-		newNode->right = Tree(arr, mid+1 , n2);
+		int mid = n1 + (n2 - n1) / 2;
+		newNode->data = arr[mid];
+		if (arr[mid] == 7) {
+			mid = mid;
+		}
+		newNode->left = Tree(arr, n1, mid);
+		newNode->right = Tree(arr, mid + 1, n2);
 		return newNode;
 	}
 }
 
-int FillTree(SearchTree *bt, int* arr,int n) {
+SearchTree* FillTree(SearchTree* bt, int* arr, int n) {
 	bt = (SearchTree*)malloc(sizeof(SearchTree));
 	if (bt == NULL) {
-		return 0;
+		return NULL;
 	}
 	else {
 		BubleSort(arr, n);
-		int mid = n / 2;
-		//bt = (SearchTree*)malloc(sizeof(SearchTree));
-		bt->data = arr[mid-1];
-		bt->left = Tree(arr, 0, mid-1);
-		bt->right = Tree(arr, mid+1, n);
-		return 1;
+		bt = Tree(arr, 0, n);
+		return bt;
 	}
 }
 
-int SearchInTree(SearchTree* root,int val) {
+SearchTree* SearchInTree(SearchTree* root, int val) {
 	if (root) {
 		if (root->data == val) {
-			return 1;
+			return root;
 		}
 		else if (root->data > val)
 			return SearchInTree(root->left, val);
 		else
 			return SearchInTree(root->right, val);
 	}
-	else 
-		return 0;
+	else
+		return NULL;
 }
 
 void printTree(SearchTree* root) {
@@ -112,15 +111,45 @@ void printTree(SearchTree* root) {
 	}
 }
 
+void InsertValue(SearchTree* bt, int val) {
+	if(bt->data < val ? bt->right : bt->left)
+	{
+		InsertValue(bt->data < val ? bt->right : bt->left, val);
+	}
+	else
+	{
+		SearchTree* newLeaf=(SearchTree*)malloc(sizeof(SearchTree));
+		if (newLeaf) {
+			newLeaf->data = val;
+			newLeaf->left = NULL;
+			newLeaf->right = NULL;
+			free((bt->data < val ? bt->right : bt->left));
+			(bt->data < val ? bt->right : bt->left) = newLeaf;
+		}
+	}
+}
 
 int main()
 {
-	char n[]= "Hello World!";
-	int arr[7] = { 3,2,4,1,0,6,7 };
-	SearchTree bt;
-	//bt = (SearchTree*)malloc(sizeof(SearchTree));
-	//bt->data = 0; bt->left = NULL; bt->right = NULL;
-	//bt.data = 0; bt.left = NULL; bt.right = NULL;
-	FillTree(&bt, arr, 6);
+	char n[] = "Hello World!";
+	int arr[9] = { 3,2,4,1,0,6,7,15,24 };
+	SearchTree bt=*FillTree(&bt, arr, 9);
+	printTree(&bt);
+	printf("\n");
+	SearchTree* searchedNode=SearchInTree(&bt, 6);
+	if (searchedNode) {
+		std::cout << searchedNode->data << "\n";
+	}
+	InsertValue(&bt, 16);
+	searchedNode = SearchInTree(&bt, 16);
+	if (searchedNode) {
+		std::cout << searchedNode->data<<"\n";
+	}
+	printTree(&bt);
+	printf("\n");
+	for (int i = 0; i < 5; i++)
+	{
+		InsertValue(&bt, rand()%100);
+	}
 	printTree(&bt);
 }
