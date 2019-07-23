@@ -49,9 +49,6 @@ SearchTree* Tree(int* arr, int n1, int n2) {
 	else {
 		SearchTree* newNode;
 		newNode = (SearchTree*)malloc(sizeof(SearchTree));
-		if (newNode == NULL) {
-			return NULL;
-		}
 		int mid = n1 + (n2 - n1) / 2;
 		newNode->data = arr[mid];
 		if (arr[mid] == 7) {
@@ -132,6 +129,7 @@ void InsertValue(SearchTree* bt, int val) {
 int main()
 {
 	char n[] = "Hello World!";
+	std::cout << GetSimpleHash(n,12) << "\n";
 	int arr[9] = { 3,2,4,1,0,6,7,15,24 };
 	SearchTree bt=*FillTree(&bt, arr, 9);
 	printTree(&bt);
