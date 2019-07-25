@@ -1,4 +1,5 @@
 #include <iostream>
+
 #define T int
 #pragma region Queue
 
@@ -53,62 +54,28 @@ T DeQueue(Queue* q) {
 }
 #pragma endregion
 
-#pragma region Stack
-
-typedef struct Node {
-	T data;
-	struct Node* next;
-} Node;
-
-typedef struct {
-	Node* head;
-	int size;
-} Stack;
-
-int push(Stack* st, T val) {
-	Node* temp = (Node*)malloc(sizeof(Node));
-	if (temp == NULL) return 0;
-
-	temp->data = val;
-	temp->next = st->head;
-
-	st->head = temp;
-	st->size++;
-	return 1;
-}
-
-T pop(Stack* st) {
-	if (st->size == 0) {
-		return -1;
-	}
-	Node* temp = st->head;
-	T result = st->head->data;
-
-	st->head = st->head->next;
-	st->size--;
-	free(temp);
-	return result;
-}
-
-Node* ReadNext(Node* current) {
-	if (current->next)
-		return current->next;
-	else
-		return NULL;
-}
-#pragma endregion
-
 /*
 1. Написать рекурсивную функцию обхода графа в глубину.
 2. Написать функцию обхода графа в ширину.
 3. Запустить алгоритм Ли
 */
 
-int graph[5][5] = { {0, 1, 0, 0, 0 }
+const int H = 7;
+const int W = 7;
+
+int graph[H][W] = { {0,1,1,1,1,1,1}
+					,{0,0,0,0,0,1,1}
+					,{0,1,0,1,1,1,1}
+					,{0,0,1,0,0,1,1}
+					,{0,0,0,0,0,1,1 }
+					,{0,0,0,0,0,0,1}
+					,{0,1,1,1,1,1,0} };
+
+					/*{ {0,0 , 0, 1, 1 }
 				   ,{1, 0, 1, 1, 0}
-				   ,{0, 1, 0, 0, 1}
 				   ,{0, 1, 0, 0, 0}
-				   ,{0, 0, 0, 1, 0} };
+				   ,{0, 1, 1, 0,0}
+				   ,{0,0, 0, 1, 0} };*/
 
 int widthTravers(int sPoint, int ePoint) {
 	if (sPoint == ePoint) {
@@ -121,7 +88,7 @@ int widthTravers(int sPoint, int ePoint) {
 		int y;
 		do {
 			y = DeQueue(&q);
-			for (int x = 0; x < 5; x++)
+			for (int x = 0; x < W; x++)
 			{
 				if (graph[y][x] == 1) {
 					graph[y][x] = iter;
@@ -138,18 +105,24 @@ int widthTravers(int sPoint, int ePoint) {
 	return 0;
 }
 
-int depthTravers(int sPoint, int ePoint) {
+
+int depthTravers(int sPoint, int ePoint,int i) {
 	if (sPoint == ePoint) {
+		graph[sPoint - 2][ePoint-1] = i;
 		return 1;
 	}
 	else {
 		int x = 0;
 		int stop = 0;
-		while (x < 5 && !stop)
+		while (x < W && !stop)
 		{
 			if (graph[sPoint - 1][x] == 1) {
-				graph[sPoint - 1][x] = 2;
-				stop = depthTravers(x + 1, ePoint);
+				graph[sPoint - 1][x] = i;
+				stop = depthTravers(x + 1, ePoint,i);
+				if (!stop) {
+					graph[sPoint - 1][x] = -1;
+					i++;
+				}
 			}
 			x++;
 		}
@@ -158,9 +131,9 @@ int depthTravers(int sPoint, int ePoint) {
 }
 
 void PrintGraph() {
-	for (int y = 0; y < 5; y++)
+	for (int y = 0; y < H; y++)
 	{
-		for (int x = 0; x < 5; x++)
+		for (int x = 0; x < W; x++)
 		{
 			printf("%5d", graph[y][x]);
 		}
@@ -169,10 +142,127 @@ void PrintGraph() {
 	printf("\n");
 }
 
+const int w = 11;
+const int h = 12;
+const int OBSTACLE = -1;
+const int UNVISITED = -2;
+const int ROUTESYMB = -555;
+int grid[h][w];
+int len;
+int pointX[h * w];
+int pointY[h * w];
+int dx[] = { 1, 0, -1, 0 };
+int dy[] = {0, 1, 0, -1};
+
+void InitGrid() {
+	for (int y = 0; y < h; y++)
+	{
+		for (int x = 0; x < w; x++)
+		{
+			if (x == y % (w-1))
+				grid[y][x] = OBSTACLE;
+			else
+				grid[y][x] = UNVISITED;
+		}
+	}
+}
+
+void printLee();
+
+int lee(int sx, int sy, int ex, int ey) {
+	int x, y, vector, dist, stop;
+	pointX[0] = -1;
+	pointY[0] = -1;
+	if (sx == ex && sy == ey) return 0;
+	if (grid[sy][sx] == OBSTACLE || grid[ey][ex] == OBSTACLE) return 0;
+
+	dist = 0;
+	grid[sy][sx] = dist;
+	do {
+		stop = 1;
+		for (y = 0; y < h; y++) {
+			for (x = 0; x < w; x++) {
+				if (grid[y][x] == dist) {
+					for (vector = 0; vector < 4; vector++) {
+						int nextX = x + dx[vector];
+						int nextY = y + dy[vector];
+						if (nextX >= 0 && nextX < w &&
+							nextY >= 0 && nextY < h &&
+							grid[nextY][nextX] == UNVISITED) {
+							grid[nextY][nextX] = dist + 1;
+							stop = 0;
+						}
+					}
+				}
+			}
+		}
+		dist++;
+	} while (!stop && grid[ey][ex] == UNVISITED);
+
+	if (grid[ey][ex] == UNVISITED) return 0;
+
+	len = grid[ey][ex];
+	x = ex;
+	y = ey;
+	pointX[dist + 1] = -1;
+	pointY[dist + 1] = -1;
+	while (dist >= 0) {
+		pointX[dist] = x;
+		pointY[dist] = y;
+		dist--;
+		for (vector = 0; vector < 4; vector++) {
+			int nextX = x + dx[vector];
+			int nextY = y + dy[vector];
+			if (nextX >= 0 && nextX < w &&
+				nextY >= 0 && nextY < h &&
+				grid[nextY][nextX] == dist) {
+				x = nextX;
+				y = nextY;
+			}
+		}
+	}
+	return 1;
+}
+
+void printLee() {
+	for (int y = 0; y < h; y++)
+	{
+		for (int x = 0; x < w; x++)
+		{
+			printf("%5d", grid[y][x]);
+		}
+		printf("\n");
+	}
+	printf("\n");
+}
+void MakeRoad() {
+	int i = 0;
+	int stop = 0;
+	while (i < h * w && !stop) {
+		if (pointX[i] >= 0 && pointX[i] < w &&
+			pointY[i] >= 0 && pointY[i] < h) {
+			grid[pointY[i]][pointX[i]] = ROUTESYMB;
+		}
+		else
+			stop = 1;
+		i++;
+	}
+}
+
 int main() {
 	PrintGraph();
-	//std::cout << depthTravers(5, 1) << "\n";
-	std::cout << widthTravers(5, 1) << "\n";
+	std::cout << depthTravers(4, 5,2) << "\n";
+	//std::cout << widthTravers(4, 5) << "\n";
 	PrintGraph();
+
+	printf("Algoritm Lee\n");
+	InitGrid();
+	printLee();
+	if (lee(0, 5, 9, 8)) {
+		MakeRoad();
+		printLee();
+	}
+	else
+		printf("can not reach\n");
 	return 0;
 }
